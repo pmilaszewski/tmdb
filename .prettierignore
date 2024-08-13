@@ -1,0 +1,5 @@
+node_modules
+.husky
+.prettierignore
+yarn.lock
+app/assets/
