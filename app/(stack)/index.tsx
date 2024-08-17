@@ -2,10 +2,12 @@ import { useFetchMovies, useFetchSearchedMovie } from '@/api'
 import { PopularMovieItem } from '@/api/types'
 import { Image, Rate, Search, Text, View } from '@/components'
 import { Colors } from '@/constants/Colors'
+import { dateFormat } from '@/constants/other'
 import { searchedValueAtom } from '@/jotai/atoms'
-import { FlashList } from '@shopify/flash-list'
+import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import dayjs from 'dayjs'
 import { useRouter } from 'expo-router'
+import { t } from 'i18next'
 import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 import {
@@ -21,7 +23,7 @@ const PADDING = 20
 const ITEM_HEIGHT = 256 + 56 + 32 + 16 // image + title + 2x description + margin
 
 export default function Home() {
-  const router = useRouter()
+  const { push } = useRouter()
   const searchedValue = useAtomValue(searchedValueAtom)
 
   const { isFetching, data, hasNextPage, fetchNextPage } = useFetchMovies()
@@ -36,7 +38,7 @@ export default function Home() {
   const isLoading = isFetching || isSearchFetching
 
   const handleGoToDetails = (id: number) => {
-    router.push(`/(stack)/${id}`)
+    push(`/(stack)/${id}`)
   }
 
   const flattenedData = useMemo(() => {
@@ -53,7 +55,7 @@ export default function Home() {
     }
   }
 
-  const renderItem = ({ item }: { item: PopularMovieItem }) => {
+  const renderItem: ListRenderItem<PopularMovieItem> = ({ item }) => {
     return (
       <Pressable
         key={item.id}
@@ -67,8 +69,9 @@ export default function Home() {
             {item.title}
           </Text>
           <Text variant="date">
-            Release date{'\n'}
-            {dayjs(item.release_date).format('DD MMM YYYY')}
+            {t('home.releaseDate', {
+              value: dayjs(item.release_date).format(dateFormat),
+            })}
           </Text>
         </View>
       </Pressable>
@@ -81,7 +84,9 @@ export default function Home() {
         <Search refetch={searchRefetch} />
       </View>
       <Text style={{ margin: PADDING }} variant="header">
-        {searchedValue ? `Searched for "${searchedValue}"` : 'Popular movies'}
+        {searchedValue
+          ? t('home.searchedTitle', { value: searchedValue })
+          : t('home.title')}
       </Text>
       <FlashList
         data={flattenedData}
@@ -92,7 +97,9 @@ export default function Home() {
         onEndReachedThreshold={0.1}
         ListEmptyComponent={
           <View style={{ flexDirection: 'row' }}>
-            <Text>{isLoading ? 'Loading...' : 'No results'}</Text>
+            <Text>
+              {isLoading ? t('generic.loading') : t('home.noResults')}
+            </Text>
             {isLoading && (
               <ActivityIndicator
                 style={{ marginLeft: 8 }}

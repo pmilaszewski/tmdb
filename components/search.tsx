@@ -7,6 +7,7 @@ import {
   QueryObserverResult,
   RefetchOptions,
 } from '@tanstack/react-query'
+import { t } from 'i18next'
 import { useSetAtom } from 'jotai'
 import { debounce } from 'lodash'
 import { useCallback, useState } from 'react'
@@ -56,7 +57,7 @@ export const Search = ({ refetch, ...props }: SearchProps) => {
         style={[styles.input, props.style]}
         value={value}
         onChangeText={onChangeText}
-        placeholder="Search"
+        placeholder={t('search.placeholder')}
       />
       {value && (
         <Pressable style={styles.clear} onPress={() => onChangeText('')}>

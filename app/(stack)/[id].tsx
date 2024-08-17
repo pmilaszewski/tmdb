@@ -1,9 +1,11 @@
 import { useFetchMovieDetails } from '@/api'
 import { Chip, Company, Image, Rate, Section, Text, View } from '@/components'
 import { Colors } from '@/constants/Colors'
+import { dateFormat } from '@/constants/other'
 import { Ionicons } from '@expo/vector-icons'
 import dayjs from 'dayjs'
 import { useLocalSearchParams, useRouter } from 'expo-router'
+import { t } from 'i18next'
 import {
   ActivityIndicator,
   Pressable,
@@ -13,19 +15,15 @@ import {
 
 export default function Details() {
   const { id } = useLocalSearchParams()
-  const router = useRouter()
+  const { back } = useRouter()
   const { data: detailsData, isFetching } = useFetchMovieDetails(id as string)
-
-  const handleGoBack = () => {
-    router.back()
-  }
 
   if (!detailsData) {
     return (
       <View style={styles.empty}>
-        <Text variant="header">Something went wrong</Text>
-        <Pressable style={styles.button} onPress={handleGoBack}>
-          <Text>Go back</Text>
+        <Text variant="header">{t('error.default')}</Text>
+        <Pressable style={styles.button} onPress={back}>
+          <Text>{t('generic.goBack')}</Text>
         </Pressable>
       </View>
     )
@@ -34,7 +32,7 @@ export default function Details() {
   if (isFetching) {
     return (
       <View style={styles.empty}>
-        <Text variant="header">Loading...</Text>
+        <Text variant="header">{t('generic.loading')}</Text>
         <ActivityIndicator
           style={styles.loader}
           size="large"
@@ -49,7 +47,7 @@ export default function Details() {
   return (
     <ScrollView style={styles.main}>
       <View>
-        <Pressable style={styles.backIcon} onPress={handleGoBack}>
+        <Pressable style={styles.backIcon} onPress={back}>
           <Ionicons size={24} name="chevron-back" />
         </Pressable>
         <Image style={styles.image} source={data.backdrop_path} />
@@ -59,7 +57,7 @@ export default function Details() {
         <Text variant="header">{data.title}</Text>
         <Text>{data.tagline}</Text>
         <Section
-          title={'Genres'}
+          title={t('details.genres')}
           body={
             <View style={styles.container}>
               {data.genres.map((genre, index) => (
@@ -68,19 +66,24 @@ export default function Details() {
             </View>
           }
         />
-        <Section title="Overview" body={data.overview} />
+        <Section title={t('details.overview')} body={data.overview} />
         <Section
-          title="Release date"
-          body={dayjs(data.release_date).format('DD MMM YYYY')}
+          title={t('details.releaseDate')}
+          body={dayjs(data.release_date).format(dateFormat)}
         />
         <Section
-          title="Languages"
+          title={t('details.languages')}
           body={data.spoken_languages.flatMap(
             (language) => language.english_name,
           )}
         />
         <Section
-          title="Production companies"
+          title={t('details.movieLength')}
+          body={t('details.runtime', { value: data.runtime })}
+        />
+        <Section title={t('details.site')} body={data.homepage} link />
+        <Section
+          title={t('details.productionCompanies')}
           body={
             <View style={styles.container}>
               {data.production_companies.map((company) => (

@@ -1,6 +1,7 @@
 import { Toast } from '@/components'
 import { Colors } from '@/constants/Colors'
 import { errorAtom } from '@/jotai/atoms'
+import '@/lang/i18n'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useFonts } from 'expo-font'
 import { Stack } from 'expo-router'
@@ -17,6 +18,7 @@ SplashScreen.preventAutoHideAsync()
 const queryClient = new QueryClient()
 
 export default function RootLayout() {
+  // loading fonts is required
   const [loaded] = useFonts({
     Montserrat: require('../assets/fonts/Montserrat-Regular.ttf'),
     'Montserrat-Black': require('../assets/fonts/Montserrat-Black.ttf'),
@@ -27,6 +29,7 @@ export default function RootLayout() {
   const [error, setError] = useAtom(errorAtom)
 
   useEffect(() => {
+    // removing error after hiding toast with information
     setTimeout(() => setError(null), 3500)
   }, [error])
 

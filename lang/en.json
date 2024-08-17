@@ -1,0 +1,28 @@
+{
+  "generic": {
+    "loading": "Loading...",
+    "goBack": "Go back"
+  },
+  "home": {
+    "title": "Popular movies",
+    "searchedTitle": "Searched for \"{{value}}\"",
+    "noResults": "No results",
+    "releaseDate": "Release date\n{{value}}"
+  },
+  "search": {
+    "placeholder": "Search"
+  },
+  "error": {
+    "default": "Something went wrong!"
+  },
+  "details": {
+    "genres": "Genres",
+    "overview": "Overview",
+    "releaseDate": "Release date",
+    "languages": "Languages",
+    "productionCompanies": "Production companies",
+    "site": "Site",
+    "movieLength": "Movie length",
+    "runtime": "{{value}} minutes"
+  }
+}

@@ -1,5 +1,6 @@
 import { Colors } from '@/constants/Colors'
 import { Ionicons } from '@expo/vector-icons'
+import { t } from 'i18next'
 import { useEffect, useState } from 'react'
 import { StyleSheet } from 'react-native'
 import Animated, {
@@ -16,7 +17,7 @@ type ToastProps = {
   text?: string
 }
 
-const DEFAULT_VALUE = 'Ooops! Something went wrong!'
+const DEFAULT_VALUE = t('error.default')
 
 export const Toast = ({ text = DEFAULT_VALUE }: ToastProps) => {
   const [isActive, setIsActive] = useState(false)
