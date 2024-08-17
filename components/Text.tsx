@@ -2,7 +2,7 @@ import { Colors } from '@/constants/Colors'
 import type { TextProps } from 'react-native'
 import { Text as RNText, StyleSheet } from 'react-native'
 
-type CustomTextProps = TextProps & {
+interface CustomTextProps extends TextProps {
   variant?: 'default' | 'header' | 'title' | 'description' | 'error'
 }
 

@@ -1,6 +1,7 @@
 import { Link, Stack } from 'expo-router'
 import { StyleSheet, Text, View } from 'react-native'
 
+// DEFAULT SCREEN FROM EXPO STARTER
 export default function NotFoundScreen() {
   return (
     <>

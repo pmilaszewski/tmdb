@@ -1,13 +1,21 @@
-import { fetchMovies } from '@/api'
+import { fetchMovies, fetchSearchedMovies } from '@/api'
 import { PopularMovieItem } from '@/api/types'
-import { Text, View } from '@/components'
+import { Search, Text, View } from '@/components'
 import { Colors } from '@/constants/Colors'
+import { searchedValueAtom } from '@/jotai/atoms'
 import { Ionicons } from '@expo/vector-icons'
 import { FlashList } from '@shopify/flash-list'
 import dayjs from 'dayjs'
 import { useRouter } from 'expo-router'
+import { useAtomValue } from 'jotai'
 import { useEffect, useMemo } from 'react'
-import { Dimensions, Image, Pressable, StyleSheet } from 'react-native'
+import {
+  ActivityIndicator,
+  Dimensions,
+  Image,
+  Pressable,
+  StyleSheet,
+} from 'react-native'
 
 const { width } = Dimensions.get('screen')
 
@@ -16,28 +24,38 @@ const ITEM_HEIGHT = 256 + 56 + 32 + 16 // image + title + 2x description + margi
 
 export default function Home() {
   const router = useRouter()
-  const { isFetching, error, data, hasNextPage, fetchNextPage } = fetchMovies()
+  const searchedValue = useAtomValue(searchedValueAtom)
+  const { isFetching, data, hasNextPage, fetchNextPage } = fetchMovies()
+  const {
+    data: searchData,
+    isFetching: isSearchFetching,
+    refetch: searchRefetch,
+    hasNextPage: searchHasNextPage,
+    fetchNextPage: searchFetchNextPage,
+  } = fetchSearchedMovies(searchedValue)
 
-  console.log({ isFetching })
-  console.log({ error })
-  console.log({ hasNextPage })
-
-  useEffect(() => {
-    console.log({ data })
-    console.log('pages: ', data?.pages)
-    console.log('pages length: ', data?.pages[0].data.results.length)
-  }, [data])
+  const isLoading = isFetching || isSearchFetching
 
   const handleGoToDetails = (id: number) => {
     router.push(`/(stack)/${id}`)
   }
 
-  const flattenedData = useMemo(
-    () => data?.pages.flatMap((page) => page.data.results) ?? [],
-    [data],
-  )
+  const flattenedData = useMemo(() => {
+    const dataToShow =
+      searchedValue && searchData?.pages[0].data.results
+        ? searchData?.pages
+        : data?.pages
 
-  const fetchMore = async () => hasNextPage && (await fetchNextPage())
+    return dataToShow?.flatMap((page) => page.data.results) ?? []
+  }, [data, searchedValue, searchData])
+
+  const fetchMore = async () => {
+    if (searchedValue) {
+      searchHasNextPage && (await searchFetchNextPage())
+    } else {
+      hasNextPage && (await fetchNextPage())
+    }
+  }
 
   useEffect(() => {
     console.log('item', flattenedData[0])
@@ -76,9 +94,17 @@ export default function Home() {
 
   return (
     <View style={styles.main}>
-      <Text style={{ margin: PADDING }} variant="header">
-        Popular movies
-      </Text>
+      <View style={{ paddingHorizontal: 20, marginTop: 16 }}>
+        <Search refetch={searchRefetch} />
+      </View>
+      <View style={{ flexDirection: 'row' }}>
+        <Text style={{ margin: PADDING }} variant="header">
+          {searchedValue && searchData
+            ? `Searched for "${searchedValue}"`
+            : 'Popular movies'}
+        </Text>
+        {isLoading && <ActivityIndicator animating color={Colors.darkBlue} />}
+      </View>
       <FlashList
         data={flattenedData}
         renderItem={renderItem}

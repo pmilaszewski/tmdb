@@ -1,2 +1,3 @@
-export * from './Text'
-export * from './View'
+export * from './search'
+export * from './text'
+export * from './view'

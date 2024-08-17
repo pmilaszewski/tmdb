@@ -15,7 +15,7 @@ export type PopularMovieItem = {
   vote_count: number
 }
 
-export type PopularMoviePageData = {
+export type MoviePageData = {
   page: number
   results: PopularMovieItem[]
   total_pages: number
@@ -23,7 +23,7 @@ export type PopularMoviePageData = {
 }
 
 export type PopularMoviePage = {
-  data: PopularMoviePageData
+  data: MoviePageData
   nextPage: number
 }
 

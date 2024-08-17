@@ -1,8 +1,10 @@
 import { Colors } from '@/constants/Colors'
+import { errorAtom } from '@/jotai/atoms'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useFonts } from 'expo-font'
 import { Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
+import { useAtom } from 'jotai'
 import { useEffect } from 'react'
 import { StatusBar, StyleSheet } from 'react-native'
 import 'react-native-reanimated'
@@ -21,6 +23,10 @@ export default function RootLayout() {
     'Montserrat-Medium': require('../assets/fonts/Montserrat-Medium.ttf'),
     'Montserrat-Italic': require('../assets/fonts/Montserrat-Italic.ttf'),
   })
+  const error = useAtom(errorAtom)
+
+  // ADD ERROR HANDLING
+  console.log({ error })
 
   useEffect(() => {
     if (loaded) {
