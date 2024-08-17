@@ -1,9 +1,8 @@
 import { fetchMovies, fetchSearchedMovies } from '@/api'
 import { PopularMovieItem } from '@/api/types'
-import { Search, Text, View } from '@/components'
+import { Image, Rate, Search, Text, View } from '@/components'
 import { Colors } from '@/constants/Colors'
 import { searchedValueAtom } from '@/jotai/atoms'
-import { Ionicons } from '@expo/vector-icons'
 import { FlashList } from '@shopify/flash-list'
 import dayjs from 'dayjs'
 import { useRouter } from 'expo-router'
@@ -12,7 +11,6 @@ import { useMemo } from 'react'
 import {
   ActivityIndicator,
   Dimensions,
-  Image,
   Pressable,
   StyleSheet,
 } from 'react-native'
@@ -61,21 +59,13 @@ export default function Home() {
         style={styles.item}
         onPress={() => handleGoToDetails(item.id)}
       >
-        <Image
-          style={styles.image}
-          source={{
-            uri: `${process.env.EXPO_PUBLIC_API_IMAGES_URL}${item.poster_path}`,
-          }}
-        />
-        <View style={styles.stars}>
-          <Ionicons name="star" style={styles.icon} size={16} />
-          <Text>{item.vote_average.toFixed(1)}</Text>
-        </View>
+        <Image style={styles.image} source={item.poster_path} />
+        <Rate rate={item.vote_average} variant="list" />
         <View style={styles.itemBottom}>
           <Text variant="title" numberOfLines={2}>
-            {item.original_title}
+            {item.title}
           </Text>
-          <Text variant="description">
+          <Text variant="date">
             Release date{'\n'}
             {dayjs(item.release_date).format('DD MMM YYYY')}
           </Text>
@@ -107,6 +97,11 @@ export default function Home() {
             onEndReached={fetchMore}
             numColumns={2}
             onEndReachedThreshold={0.1}
+            ListEmptyComponent={
+              <View>
+                <Text>No results</Text>
+              </View>
+            }
             contentContainerStyle={{
               paddingHorizontal: PADDING,
             }}
@@ -126,10 +121,6 @@ const styles = StyleSheet.create({
     height: 256,
     width: '100%',
   },
-  icon: {
-    color: Colors.lightBlue,
-    marginRight: 4,
-  },
   itemBottom: {
     backgroundColor: Colors.darkBlue,
     padding: 8,
@@ -141,16 +132,6 @@ const styles = StyleSheet.create({
     width: (width - (PADDING * 2 + 16)) / 2,
     marginBottom: 16,
     marginLeft: 4,
-  },
-  stars: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    position: 'absolute',
-    right: 0,
-    top: 232,
-    borderTopLeftRadius: 8,
-    padding: 2,
   },
   loader: {
     flex: 1,

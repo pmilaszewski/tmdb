@@ -3,7 +3,7 @@ import type { TextProps } from 'react-native'
 import { Text as RNText, StyleSheet } from 'react-native'
 
 interface CustomTextProps extends TextProps {
-  variant?: 'default' | 'header' | 'title' | 'description' | 'error'
+  variant?: 'default' | 'header' | 'title' | 'description' | 'error' | 'date'
 }
 
 export const Text = ({ variant = 'default', ...props }: CustomTextProps) => (
@@ -37,6 +37,13 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   description: {
+    ...base,
+    color: Colors.darkBlue,
+    fontSize: 16,
+    fontFamily: 'Montserrat-Italic',
+    lineHeight: 20,
+  },
+  date: {
     ...base,
     color: Colors.lightBlue,
     fontSize: 12,
