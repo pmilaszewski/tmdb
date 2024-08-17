@@ -1,3 +1,4 @@
+import { Toast } from '@/components'
 import { Colors } from '@/constants/Colors'
 import { errorAtom } from '@/jotai/atoms'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -23,10 +24,11 @@ export default function RootLayout() {
     'Montserrat-Medium': require('../assets/fonts/Montserrat-Medium.ttf'),
     'Montserrat-Italic': require('../assets/fonts/Montserrat-Italic.ttf'),
   })
-  const error = useAtom(errorAtom)
+  const [error, setError] = useAtom(errorAtom)
 
-  // ADD ERROR HANDLING
-  console.log({ error })
+  useEffect(() => {
+    setTimeout(() => setError(null), 3500)
+  }, [error])
 
   useEffect(() => {
     if (loaded) {
@@ -49,6 +51,7 @@ export default function RootLayout() {
           <Stack.Screen name="(stack)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
         </Stack>
+        {error && <Toast text={error} />}
       </SafeAreaView>
     </QueryClientProvider>
   )

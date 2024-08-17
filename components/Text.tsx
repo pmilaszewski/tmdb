@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     ...base,
     color: Colors.red,
     fontSize: 12,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat-Medium',
     lineHeight: 16,
   },
 })

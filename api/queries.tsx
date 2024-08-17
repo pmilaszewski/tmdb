@@ -12,14 +12,10 @@ const defaultOptions = {
 }
 
 const handleError = (e: Error | any) => {
-  const setErrorAtomValue = useSetAtom(errorAtom)
-
   if (e instanceof Error) {
-    setErrorAtomValue(e.message)
     throw new Error(e.message)
   } else {
     const errorMessage = 'Something went wrong'
-    setErrorAtomValue(errorMessage)
     throw new Error(errorMessage)
   }
 }
@@ -43,15 +39,18 @@ const fetcherMovies = async (pageNumber: number) => {
 }
 
 export const fetchMovies = () => {
-  const { data, error, fetchNextPage, hasNextPage, isFetching } =
+  const { data, fetchNextPage, error, hasNextPage, isFetching } =
     useInfiniteQuery({
       queryKey: ['movies'],
       queryFn: ({ pageParam = 1 }) => fetcherMovies(pageParam),
       initialPageParam: 1,
       getNextPageParam: (lastPage) => lastPage.nextPage,
     })
+  const setErrorAtomValue = useSetAtom(errorAtom)
 
-  return { isFetching, error, data, hasNextPage, fetchNextPage }
+  error && setErrorAtomValue(error.message)
+
+  return { isFetching, data, hasNextPage, fetchNextPage }
 }
 
 const fetcherDetails = async (id: string) => {
@@ -76,7 +75,11 @@ export const fetchMovieDetails = (id: string) => {
     queryFn: () => fetcherDetails(id),
   })
 
-  return { isFetching, data, error }
+  const setErrorAtomValue = useSetAtom(errorAtom)
+
+  error && setErrorAtomValue(error.message)
+
+  return { isFetching, data }
 }
 
 const fetcherSearchedMovies = async (pageNumber: number, key: string) => {
@@ -107,5 +110,9 @@ export const fetchSearchedMovies = (key: string) => {
       enabled: false,
     })
 
-  return { isFetching, error, data, hasNextPage, fetchNextPage, refetch }
+  const setErrorAtomValue = useSetAtom(errorAtom)
+
+  error && setErrorAtomValue(error.message)
+
+  return { isFetching, data, hasNextPage, fetchNextPage, refetch }
 }

@@ -5,14 +5,10 @@ import { Button, StyleSheet, Text } from 'react-native'
 
 export default function Details() {
   const { id } = useLocalSearchParams()
-  const {
-    data: detailsData,
-    isFetching: isDetailsFetching,
-    error: detailsError,
-  } = fetchMovieDetails(id as string)
+  const { data: detailsData, isFetching: isDetailsFetching } =
+    fetchMovieDetails(id as string)
 
   console.log({ isDetailsFetching })
-  console.log({ detailsError })
   console.log('details: ', detailsData?.data)
 
   const router = useRouter()
