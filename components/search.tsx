@@ -7,9 +7,9 @@ import {
   QueryObserverResult,
   RefetchOptions,
 } from '@tanstack/react-query'
-import { useAtom } from 'jotai'
+import { useSetAtom } from 'jotai'
 import { debounce } from 'lodash'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import type { TextInputProps } from 'react-native'
 import { Pressable, StyleSheet, TextInput, View } from 'react-native'
 
@@ -29,26 +29,25 @@ interface SearchProps extends TextInputProps {
 }
 
 export const Search = ({ refetch, ...props }: SearchProps) => {
-  const [searchedValue, setSearchedValue] = useAtom(searchedValueAtom)
   const [value, setValue] = useState('')
+  const setSearchedValue = useSetAtom(searchedValueAtom)
+
+  const callApi = async (value: string) => {
+    value !== '' && (await refetch())
+  }
 
   // Added debounce to avoid calling api after every input value change
-  const setSearchedValueHandler = useCallback(
-    debounce(setSearchedValue, 500),
+  const handleCallApi = useCallback(debounce(callApi, 500), [])
+  const handleChangeFetchedValue = useCallback(
+    debounce(setSearchedValue, 400),
     [],
   )
 
   const onChangeText = (value: string) => {
     setValue(value)
+    handleChangeFetchedValue(value)
+    handleCallApi(value)
   }
-
-  useEffect(() => {
-    setSearchedValueHandler(value)
-  }, [value])
-
-  useEffect(() => {
-    searchedValue !== '' && refetch()
-  }, [searchedValue])
 
   return (
     <View>
@@ -88,5 +87,3 @@ const styles = StyleSheet.create({
     padding: 8,
   },
 })
-
-// export const Search = memo(_Search)

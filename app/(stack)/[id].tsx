@@ -1,4 +1,4 @@
-import { fetchMovieDetails } from '@/api'
+import { useFetchMovieDetails } from '@/api'
 import { Chip, Company, Image, Rate, Section, Text, View } from '@/components'
 import { Colors } from '@/constants/Colors'
 import { Ionicons } from '@expo/vector-icons'
@@ -14,7 +14,7 @@ import {
 export default function Details() {
   const { id } = useLocalSearchParams()
   const router = useRouter()
-  const { data: detailsData, isFetching } = fetchMovieDetails(id as string)
+  const { data: detailsData, isFetching } = useFetchMovieDetails(id as string)
 
   const handleGoBack = () => {
     router.back()

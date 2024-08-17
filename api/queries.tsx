@@ -38,7 +38,7 @@ const fetcherMovies = async (pageNumber: number) => {
   }
 }
 
-export const fetchMovies = () => {
+export const useFetchMovies = () => {
   const { data, fetchNextPage, error, hasNextPage, isFetching } =
     useInfiniteQuery({
       queryKey: ['movies'],
@@ -69,7 +69,7 @@ const fetcherDetails = async (id: string) => {
   }
 }
 
-export const fetchMovieDetails = (id: string) => {
+export const useFetchMovieDetails = (id: string) => {
   const { data, error, isFetching } = useQuery({
     queryKey: ['details', id],
     queryFn: () => fetcherDetails(id),
@@ -100,7 +100,7 @@ const fetcherSearchedMovies = async (pageNumber: number, key: string) => {
   }
 }
 
-export const fetchSearchedMovies = (key: string) => {
+export const useFetchSearchedMovie = (key: string) => {
   const { data, error, fetchNextPage, hasNextPage, isFetching, refetch } =
     useInfiniteQuery({
       queryKey: ['search', key],

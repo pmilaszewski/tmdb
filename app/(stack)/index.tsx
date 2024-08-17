@@ -1,4 +1,4 @@
-import { fetchMovies, fetchSearchedMovies } from '@/api'
+import { useFetchMovies, useFetchSearchedMovie } from '@/api'
 import { PopularMovieItem } from '@/api/types'
 import { Image, Rate, Search, Text, View } from '@/components'
 import { Colors } from '@/constants/Colors'
@@ -23,14 +23,15 @@ const ITEM_HEIGHT = 256 + 56 + 32 + 16 // image + title + 2x description + margi
 export default function Home() {
   const router = useRouter()
   const searchedValue = useAtomValue(searchedValueAtom)
-  const { isFetching, data, hasNextPage, fetchNextPage } = fetchMovies()
+
+  const { isFetching, data, hasNextPage, fetchNextPage } = useFetchMovies()
   const {
     data: searchData,
     isFetching: isSearchFetching,
     refetch: searchRefetch,
     hasNextPage: searchHasNextPage,
     fetchNextPage: searchFetchNextPage,
-  } = fetchSearchedMovies(searchedValue)
+  } = useFetchSearchedMovie(searchedValue)
 
   const isLoading = isFetching || isSearchFetching
 
@@ -79,35 +80,32 @@ export default function Home() {
       <View style={styles.search}>
         <Search refetch={searchRefetch} />
       </View>
-      {isLoading ? (
-        <View style={styles.loader}>
-          <ActivityIndicator animating color={Colors.darkBlue} size="large" />
-        </View>
-      ) : (
-        <>
-          <Text style={{ margin: PADDING }} variant="header">
-            {searchedValue && searchData
-              ? `Searched for "${searchedValue}"`
-              : 'Popular movies'}
-          </Text>
-          <FlashList
-            data={flattenedData}
-            renderItem={renderItem}
-            estimatedItemSize={ITEM_HEIGHT}
-            onEndReached={fetchMore}
-            numColumns={2}
-            onEndReachedThreshold={0.1}
-            ListEmptyComponent={
-              <View>
-                <Text>No results</Text>
-              </View>
-            }
-            contentContainerStyle={{
-              paddingHorizontal: PADDING,
-            }}
-          />
-        </>
-      )}
+      <Text style={{ margin: PADDING }} variant="header">
+        {searchedValue ? `Searched for "${searchedValue}"` : 'Popular movies'}
+      </Text>
+      <FlashList
+        data={flattenedData}
+        renderItem={renderItem}
+        estimatedItemSize={ITEM_HEIGHT}
+        onEndReached={fetchMore}
+        numColumns={2}
+        onEndReachedThreshold={0.1}
+        ListEmptyComponent={
+          <View style={{ flexDirection: 'row' }}>
+            <Text>{isLoading ? 'Loading...' : 'No results'}</Text>
+            {isLoading && (
+              <ActivityIndicator
+                style={{ marginLeft: 8 }}
+                animating
+                color={Colors.darkBlue}
+              />
+            )}
+          </View>
+        }
+        contentContainerStyle={{
+          paddingHorizontal: PADDING,
+        }}
+      />
     </View>
   )
 }
