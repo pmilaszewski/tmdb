@@ -80,8 +80,6 @@ export const fetchMovieDetails = (id: string) => {
 }
 
 const fetcherSearchedMovies = async (pageNumber: number, key: string) => {
-  console.log({ pageNumber })
-  console.log({ key })
   try {
     const response = await fetch(
       `${process.env.EXPO_PUBLIC_API_URL}/search/movie?include_adult=false&language=en-US&page=${pageNumber}&query=${key}`,

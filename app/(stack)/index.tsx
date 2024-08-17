@@ -8,7 +8,7 @@ import { FlashList } from '@shopify/flash-list'
 import dayjs from 'dayjs'
 import { useRouter } from 'expo-router'
 import { useAtomValue } from 'jotai'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import {
   ActivityIndicator,
   Dimensions,
@@ -41,10 +41,7 @@ export default function Home() {
   }
 
   const flattenedData = useMemo(() => {
-    const dataToShow =
-      searchedValue && searchData?.pages[0].data.results
-        ? searchData?.pages
-        : data?.pages
+    const dataToShow = searchedValue ? searchData?.pages : data?.pages
 
     return dataToShow?.flatMap((page) => page.data.results) ?? []
   }, [data, searchedValue, searchData])
@@ -56,11 +53,6 @@ export default function Home() {
       hasNextPage && (await fetchNextPage())
     }
   }
-
-  useEffect(() => {
-    console.log('item', flattenedData[0])
-    console.log('final data len: ', flattenedData.length)
-  }, [flattenedData])
 
   const renderItem = ({ item }: { item: PopularMovieItem }) => {
     return (
@@ -94,28 +86,33 @@ export default function Home() {
 
   return (
     <View style={styles.main}>
-      <View style={{ paddingHorizontal: 20, marginTop: 16 }}>
+      <View style={styles.search}>
         <Search refetch={searchRefetch} />
       </View>
-      <View style={{ flexDirection: 'row' }}>
-        <Text style={{ margin: PADDING }} variant="header">
-          {searchedValue && searchData
-            ? `Searched for "${searchedValue}"`
-            : 'Popular movies'}
-        </Text>
-        {isLoading && <ActivityIndicator animating color={Colors.darkBlue} />}
-      </View>
-      <FlashList
-        data={flattenedData}
-        renderItem={renderItem}
-        estimatedItemSize={ITEM_HEIGHT}
-        onEndReached={fetchMore}
-        numColumns={2}
-        onEndReachedThreshold={0.1}
-        contentContainerStyle={{
-          paddingHorizontal: PADDING,
-        }}
-      />
+      {isLoading ? (
+        <View style={styles.loader}>
+          <ActivityIndicator animating color={Colors.darkBlue} size="large" />
+        </View>
+      ) : (
+        <>
+          <Text style={{ margin: PADDING }} variant="header">
+            {searchedValue && searchData
+              ? `Searched for "${searchedValue}"`
+              : 'Popular movies'}
+          </Text>
+          <FlashList
+            data={flattenedData}
+            renderItem={renderItem}
+            estimatedItemSize={ITEM_HEIGHT}
+            onEndReached={fetchMore}
+            numColumns={2}
+            onEndReachedThreshold={0.1}
+            contentContainerStyle={{
+              paddingHorizontal: PADDING,
+            }}
+          />
+        </>
+      )}
     </View>
   )
 }
@@ -154,5 +151,14 @@ const styles = StyleSheet.create({
     top: 232,
     borderTopLeftRadius: 8,
     padding: 2,
+  },
+  loader: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  search: {
+    paddingHorizontal: 20,
+    marginTop: 16,
   },
 })

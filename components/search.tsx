@@ -7,7 +7,7 @@ import {
   QueryObserverResult,
   RefetchOptions,
 } from '@tanstack/react-query'
-import { useSetAtom } from 'jotai'
+import { useAtom } from 'jotai'
 import { debounce } from 'lodash'
 import { useCallback, useEffect, useState } from 'react'
 import type { TextInputProps } from 'react-native'
@@ -29,25 +29,26 @@ interface SearchProps extends TextInputProps {
 }
 
 export const Search = ({ refetch, ...props }: SearchProps) => {
-  const setSearchedValue = useSetAtom(searchedValueAtom)
+  const [searchedValue, setSearchedValue] = useAtom(searchedValueAtom)
   const [value, setValue] = useState('')
 
-  const callApi = (searchedValue: string) => {
-    console.log('call api', searchedValue)
-    searchedValue !== '' && refetch()
-    setSearchedValue(searchedValue)
-  }
-
   // Added debounce to avoid calling api after every input value change
-  const callApiHandler = useCallback(debounce(callApi, 1000), [])
+  const setSearchedValueHandler = useCallback(
+    debounce(setSearchedValue, 500),
+    [],
+  )
 
   const onChangeText = (value: string) => {
     setValue(value)
   }
 
   useEffect(() => {
-    callApiHandler(value)
+    setSearchedValueHandler(value)
   }, [value])
+
+  useEffect(() => {
+    searchedValue !== '' && refetch()
+  }, [searchedValue])
 
   return (
     <View>
