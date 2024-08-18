@@ -11,4 +11,5 @@ export const Colors = {
   lightBlue: 'rgba(16,180,228, 1)',
   lightGreen: 'rgba(144,206,161,1)',
   red: 'rgba(172,0,0,1)',
+  grey: 'rgba(180,180,180,1)',
 }

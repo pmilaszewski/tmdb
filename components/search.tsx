@@ -58,6 +58,7 @@ export const Search = ({ refetch, ...props }: SearchProps) => {
         value={value}
         onChangeText={onChangeText}
         placeholder={t('search.placeholder')}
+        placeholderTextColor={Colors.grey}
       />
       {value && (
         <Pressable style={styles.clear} onPress={() => onChangeText('')}>
