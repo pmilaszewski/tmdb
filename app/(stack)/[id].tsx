@@ -18,17 +18,6 @@ export default function Details() {
   const { back } = useRouter()
   const { data: detailsData, isFetching } = useFetchMovieDetails(id as string)
 
-  if (!detailsData) {
-    return (
-      <View style={styles.empty}>
-        <Text variant="header">{t('error.default')}</Text>
-        <Pressable style={styles.button} onPress={back}>
-          <Text>{t('generic.goBack')}</Text>
-        </Pressable>
-      </View>
-    )
-  }
-
   if (isFetching) {
     return (
       <View style={styles.empty}>
@@ -38,6 +27,17 @@ export default function Details() {
           size="large"
           color={Colors.darkBlue}
         />
+      </View>
+    )
+  }
+
+  if (!detailsData) {
+    return (
+      <View style={styles.empty}>
+        <Text variant="header">{t('error.default')}</Text>
+        <Pressable style={styles.button} onPress={back}>
+          <Text>{t('generic.goBack')}</Text>
+        </Pressable>
       </View>
     )
   }
